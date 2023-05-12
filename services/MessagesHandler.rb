@@ -10,7 +10,7 @@ class MessagesHandler
     case @message.text
     when '/start'
       send_custom_keyboard
-    when 'Hello'
+    when '1'
       send_welcome
     when '2'
       send_goodbye
@@ -19,6 +19,7 @@ class MessagesHandler
     else
       send_custom_keyboard
     end
+    bad_words(@message)
   end
 
   private
@@ -43,5 +44,22 @@ class MessagesHandler
 
     markup = Telegram::Bot::Types::ReplyKeyboardMarkup.new(keyboard: buttons, one_time_keyboard: false)
     bot.api.send_message(chat_id: @message.chat.id, text: "Please select a command:", reply_markup: markup)
+  end
+
+  def bad_words(message)
+    russian_words = ['русня', 'росія', 'россия', 'москаль', 'кацап', 'вагнер', 'рф', 'рускій']
+    bad_words = ['блять', 'сука', 'хуй']
+    russian_words.each do |word|
+      if message.text.include?(word)
+        bot.api.send_message(chat_id: message.chat.id, text: "Русні пизда!")
+        return
+      end
+    end
+    bad_words.each do |word|
+      if message.text.include?(word)
+        bot.api.send_message(chat_id: message.chat.id, text: "Не матюкайся!")
+        return
+      end
+    end
   end
 end
